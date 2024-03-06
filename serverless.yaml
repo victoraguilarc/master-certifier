@@ -1,0 +1,31 @@
+service: skills-certifier
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-east-1
+  httpApi:
+    cors: true
+  timeout: 10
+  memorySize: 128
+
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+
+functions:
+  app:
+    package:
+      patterns:
+        - "src/**"
+    handler: src.handler.handler
+    events:
+      - http:
+          method: any
+          path: /{proxy+}
+          cors: true
+custom:
+  pythonRequirements:
+    dockerizePip: true
