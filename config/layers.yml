@@ -1,0 +1,8 @@
+.layers: &default_layers
+  - arn:aws:lambda:us-east-1:027255383542:layer:AWS-AppConfig-Extension:69
+  - Ref: PythonRequirementsLambdaLayer
+
+dev:
+  layers: *default_layers
+prod:
+  layers: *default_layers

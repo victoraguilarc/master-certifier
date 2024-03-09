@@ -4,6 +4,7 @@
     "author": "LAFFARGUE Nicolas",
     "devDependencies": {
         "serverless": "3.38.0",
+        "serverless-apigateway-service-proxy": "^2.2.1",
         "serverless-offline": "^13.3.3",
         "serverless-python-requirements": "^6.0.1"
     }

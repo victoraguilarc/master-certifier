@@ -5,24 +5,24 @@ from typing import Optional
 @dataclass
 class Certificate(object):
     id: str
-    category: str
+    template_id: str
     group: str
-    file_url: Optional[str] = None
+    file_path: Optional[str] = None
 
     @property
     def to_dict(self) -> dict:
         return {
             'id': self.id,
-            'category': self.category,
+            'template_id': self.template_id,
             'group': self.group,
-            'file_url': self.file_url,
+            'file_path': self.file_path,
         }
 
     @classmethod
     def from_dict(cls, instance_data: dict) -> 'Certificate':
         return cls(
             id=instance_data['id'],
-            category=instance_data['category'],
+            template_id=instance_data['template_id'],
             group=instance_data['group'],
-            file_url=instance_data.get('file_url'),
+            file_path=instance_data.get('file_path'),
         )

@@ -1,0 +1,22 @@
+.functions: &default_functions
+  app:
+    package:
+      patterns:
+        - "src/**"
+    handler: src.handler.handler
+    environment:
+      CLOUDFRONT_BASE_URL: ${ssm:/${self:service}/cloudfront-base-url}
+      CERTIFICATE_TABLE: ${self:custom.CertificateTableName}
+      REPLACEMENT_TABLE: ${self:custom.ReplacementTableName}
+      TEMPLATE_TABLE: ${self:custom.TemplateTableName}
+      CERTIFICATE_BUCKET: ${self:custom.CertificateBucketName}
+    events:
+      - http:
+          method: any
+          path: /{proxy+}
+          cors: true
+
+dev:
+  functions: *default_functions
+prod:
+  functions: *default_functions

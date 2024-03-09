@@ -33,5 +33,5 @@ class DynamoCertificateRepository(DynamoDBMixin, CertificateRepository):
         matches = query_result.get('Items', [])
         return [Certificate.from_dict(match) for match in matches]
 
-    def persist(self, certificate: Certificate):
-        self.table.put_item(Item=certificate.to_dict)
+    def persist(self, instance: Certificate):
+        self.table.put_item(Item=instance.to_dict)

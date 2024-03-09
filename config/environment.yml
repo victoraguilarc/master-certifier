@@ -1,0 +1,15 @@
+.environment: &default_environment
+  SERVICE: ${self:service}
+  STAGE: ${self:provider.stage}
+  STACK: ${self:provider.stackName}
+  REGION: ${opt:region, self:provider.region}
+  SENTRY_DSN: https://4a07f5396794480280aadab8254ffa28@o251730.ingest.sentry.io/4505538326167552
+
+dev:
+  environment:
+    <<: *default_environment
+    POWERTOOLS_TRACE_DISABLED: true
+prod:
+  environment:
+    <<: *default_environment
+    POWERTOOLS_TRACE_DISABLED: false

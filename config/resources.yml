@@ -1,0 +1,131 @@
+.resources: &default_resources
+  Resources:
+    TemplateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.TemplateTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    ReplacementTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.ReplacementTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: template_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: template_id
+            KeySchema:
+              - AttributeName: template_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
+        BillingMode: PAY_PER_REQUEST
+
+    CertificateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.CertificateTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: template_id
+            AttributeType: S
+          - AttributeName: group
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: template_id
+            KeySchema:
+              - AttributeName: template_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
+          - IndexName: group
+            KeySchema:
+              - AttributeName: group
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
+        BillingMode: PAY_PER_REQUEST
+
+    CertificateBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.CertificateBucketName}
+
+    CloudFrontOriginAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: !Ref CertificateBucket
+
+    ReadPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref CertificateBucket
+        PolicyDocument:
+          Statement:
+            - Action: s3:GetObject
+              Effect: Allow
+              Resource:
+                - arn:aws:s3:::${self:custom.CertificateBucketName}/*
+                - arn:aws:s3:::${self:custom.CertificateBucketName}
+              Principal:
+                CanonicalUser: !GetAtt CloudFrontOriginAccessIdentity.S3CanonicalUserId
+
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          CustomErrorResponses:
+            - ErrorCode: 403
+              ResponseCode: 404
+              ResponsePagePath: /error.html
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            DefaultTTL: 3600
+            ForwardedValues:
+              Cookies:
+                Forward: none
+              QueryString: false
+            MaxTTL: 86400
+            MinTTL: 60
+            TargetOriginId: s3origin
+            ViewerProtocolPolicy: redirect-to-https
+          DefaultRootObject: "index.html"
+          Enabled: true
+          HttpVersion: http2
+          Origins:
+            - DomainName: !GetAtt CertificateBucket.DomainName
+              Id: s3origin
+              S3OriginConfig:
+                OriginAccessIdentity: !Sub >-
+                  origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+          PriceClass: PriceClass_All
+
+dev:
+  resources: *default_resources
+prod:
+  resources: *default_resources

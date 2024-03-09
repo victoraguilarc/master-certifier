@@ -6,26 +6,44 @@ provider:
   name: aws
   runtime: python3.10
   region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  stackName: ${self:service}-${self:provider.stage}
+  layers: ${file(config/layers.yml):${self:provider.stage}.layers}
+  environment: ${file(config/environment.yml):${self:provider.stage}.environment}
+  iam:
+    role:
+      statements: ${file(config/iam.yml):${self:provider.stage}.iamRoleStatements}
+  deploymentBucket:
+    name: serverless-infrastructure
+    blockPublicAccess: true
+  tracing:
+    apiGateway: true
+    lambda: true
   httpApi:
     cors: true
-  timeout: 10
+  timeout: 25
   memorySize: 128
+
+functions: ${file(config/functions.yml):${self:provider.stage}.functions}
+resources: ${file(config/resources.yml):${self:provider.stage}.resources}
 
 plugins:
   - serverless-python-requirements
   - serverless-offline
 
-functions:
-  app:
-    package:
-      patterns:
-        - "src/**"
-    handler: src.handler.handler
-    events:
-      - http:
-          method: any
-          path: /{proxy+}
-          cors: true
 custom:
+  CertificateTableName: certificate-table-${self:provider.stage}
+  ReplacementTableName: replacement-table-${self:provider.stage}
+  TemplateTableName: template-table-${self:provider.stage}
+  CertificateBucketName: certificate-repository-${self:provider.stage}
+
   pythonRequirements:
-    dockerizePip: true
+    useDownloadCache: false
+    usePoetry: true
+    layer:
+      name: ${self:provider.stackName}-dependencies
+      description: Python requirements lambda layer
+      compatibleRuntimes:
+        - python3.10
+      allowedAccounts:
+        - '*'

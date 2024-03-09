@@ -18,5 +18,5 @@ class CertificateRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def persist(self, certificate: Certificate):
+    def persist(self, instance: Certificate):
         raise NotImplementedError

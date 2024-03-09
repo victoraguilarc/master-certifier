@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 
-class Bucket(ABC):
+class FileBucket(ABC):
 
     @abstractmethod
-    def get(self, file_name: str):
+    def get_file(self, file_name: str) -> bytes:
         raise NotImplementedError
 
     @abstractmethod
