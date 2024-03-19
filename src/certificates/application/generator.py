@@ -103,8 +103,7 @@ class CertificateGenerator(object):
         axis_y: float,
         text: str,
     ):
-        canvas_pdf.setFontSize(text_metadata.font_size)
-        canvas_pdf.setFont(text_metadata, text_metadata.font_size)
+        canvas_pdf.setFont(text_metadata.font_family, text_metadata.font_size)
         if text_metadata.is_text_center:
             canvas_pdf.drawCentredString(float(axis_x), float(axis_y), text)
         elif text_metadata.is_text_left:
