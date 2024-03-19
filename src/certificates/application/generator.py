@@ -110,7 +110,6 @@ class CertificateGenerator(object):
             canvas_pdf.drawString(float(axis_x), float(axis_y), text)
         elif text_metadata.is_text_right:
             canvas_pdf.drawRightString(float(axis_x), float(axis_y), text)
-        canvas_pdf.drawString(float(axis_x), float(axis_y), text)
 
 
 

@@ -14,7 +14,7 @@ class TextAlignment(BaseEnum):
 class TextMetadata(object):
     alignment: TextAlignment = TextAlignment.CENTER
     font_size: float = 12
-    font_family: str = 'Arial'
+    font_family: str = 'Helvetica'
 
     @property
     def is_text_center(self) -> bool:
@@ -52,7 +52,7 @@ class TextMetadata(object):
             font_family=(
                 instance_data.get('font_family')
                 if instance_data.get('font_family')
-                else 'Arial'
+                else 'Helvetica'
             ),
         )
 
