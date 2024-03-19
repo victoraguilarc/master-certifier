@@ -8,6 +8,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfgen.canvas import Canvas
 
 from src.certificates.domain.models.certificate import Certificate
+from src.certificates.domain.models.metadata import TextMetadata
 from src.certificates.domain.models.replacement import Replacement
 from src.certificates.domain.repositories.certificate import CertificateRepository
 from src.certificates.domain.repositories.replacement import ReplacementRepository
@@ -80,12 +81,14 @@ class CertificateGenerator(object):
         for page_index in range(num_pages):
             replacements = collection.get_page_items(page_index)
             for replacement in replacements:
-                self._draw_text(
-                    canvas_pdf,
-                    replacement.axis_x,
-                    replacement.axis_y,
-                    self.context.get(replacement.name, ''),
-                )
+                if replacement.is_text:
+                    self._draw_text(
+                        canvas_pdf=canvas_pdf,
+                        axis_x=replacement.axis_x,
+                        axis_y=replacement.axis_y,
+                        text=self.context.get(replacement.name, ''),
+                        text_metadata=TextMetadata.from_dict(replacement.metadata),
+                    )
             canvas_pdf.showPage()
 
         canvas_pdf.save()
@@ -95,13 +98,21 @@ class CertificateGenerator(object):
     def _draw_text(
         cls,
         canvas_pdf: canvas.Canvas,
+        text_metadata: TextMetadata,
         axis_x: float,
         axis_y: float,
         text: str,
     ):
-        canvas_pdf.setFontSize(22)
-        canvas_pdf.setFont('Helvetica', 20)
-        canvas_pdf.drawCentredString(float(axis_x), float(axis_y), text)
+        canvas_pdf.setFontSize(text_metadata.font_size)
+        canvas_pdf.setFont(text_metadata, text_metadata.font_size)
+        if text_metadata.is_text_center:
+            canvas_pdf.drawCentredString(float(axis_x), float(axis_y), text)
+        elif text_metadata.is_text_left:
+            canvas_pdf.drawString(float(axis_x), float(axis_y), text)
+        elif text_metadata.is_text_right:
+            canvas_pdf.drawRightString(float(axis_x), float(axis_y), text)
+        canvas_pdf.drawString(float(axis_x), float(axis_y), text)
+
 
 
 

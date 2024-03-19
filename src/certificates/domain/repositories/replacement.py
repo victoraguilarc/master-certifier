@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import List, Optional
 from src.certificates.domain.models.replacement import Replacement
-from src.certificates.domain.models.replacement_item import ReplacementCollection
+from src.certificates.domain.models.replacement_collection import ReplacementCollection
 
 
 class ReplacementRepository(ABC):

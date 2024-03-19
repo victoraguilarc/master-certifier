@@ -4,7 +4,7 @@ from typing import List, Optional
 from boto3.dynamodb.conditions import Key
 
 from src.certificates.domain.models.replacement import Replacement
-from src.certificates.domain.models.replacement_item import ReplacementCollection
+from src.certificates.domain.models.replacement_collection import ReplacementCollection
 from src.certificates.domain.models.template import Template
 from src.certificates.domain.repositories.replacement import ReplacementRepository
 from src.common.infrastructure.dynamo_db import DynamoDBMixin

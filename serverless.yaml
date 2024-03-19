@@ -21,6 +21,9 @@ provider:
     lambda: true
   httpApi:
     cors: true
+    metrics: true
+  logs:
+    httpApi: true
   timeout: 25
   memorySize: 128
 
@@ -40,6 +43,8 @@ custom:
   pythonRequirements:
     useDownloadCache: false
     usePoetry: true
+    dockerizePip: true
+    slim: true
     layer:
       name: ${self:provider.stackName}-dependencies
       description: Python requirements lambda layer
