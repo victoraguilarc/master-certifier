@@ -17,6 +17,7 @@ pypdf2 = "^3.0.1"
 reportlab = "^4.1.0"
 ipdb = "^0.13.13"
 pydantic-core = "^2.16.3"
+lambda-warmer-py = "^0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.2.0"
