@@ -10,7 +10,7 @@ from src.common.infrastructure.dynamo_db import DynamoDBMixin
 class DynamoCertificateRepository(DynamoDBMixin, CertificateRepository):
     def find_by_id(self, instance_id: str) -> Optional[Certificate]:
         query_result = self.table.query(
-            KeyConditionExpression=Key('instance_id').eq(instance_id),
+            KeyConditionExpression=Key('id').eq(instance_id),
         )
         matches = query_result.get('Items', [])
         if not matches:

@@ -1,0 +1,3 @@
+
+class CertificateNotFoundError(Exception):
+    pass

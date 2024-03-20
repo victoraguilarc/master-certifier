@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
+from src.certificates.application.detailer import CertificateDetailer
 from src.certificates.application.generator import CertificateGenerator
 from src.certificates.application.presenters import CertificatePresenter
 from src.certificates.infrastructure.repositories.dynamo_certificate import DynamoCertificateRepository
@@ -57,6 +58,20 @@ def certificate(request: CertificateRequest):
         certificate_bucket=S3Bucket(bucket=s3_bucket.Bucket(CERTIFICATE_BUCKET)),
     )
     instance = use_case.execute()
+
+    return CertificatePresenter(instance).to_dict
+
+
+@app.get(path="/certificate/{certificate_id}", description="Get a certificate")
+def certificate(certificate_id: str):
+    dynamo_db = boto3.resource('dynamodb')
+
+    repository = DynamoCertificateRepository(table=dynamo_db.Table(CERTIFICATE_TABLE))
+
+    instance = CertificateDetailer(
+        certificate_id=certificate_id,
+        certificate_repository=repository,
+    ).execute()
 
     return CertificatePresenter(instance).to_dict
 
