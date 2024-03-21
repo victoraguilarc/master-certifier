@@ -33,12 +33,21 @@ resources: ${file(config/resources.yml):${self:provider.stage}.resources}
 plugins:
   - serverless-python-requirements
   - serverless-offline
+  - serverless-plugin-warmup
 
 custom:
   CertificateTableName: certificate-table-${self:provider.stage}
   ReplacementTableName: replacement-table-${self:provider.stage}
   TemplateTableName: template-table-${self:provider.stage}
   CertificateBucketName: certificate-repository-${self:provider.stage}
+
+  warmup:
+    default:
+      enabled: true
+      events:
+        - schedule: "rate(5 minutes)"
+      verbose: true
+      prewarm: true
 
   pythonRequirements:
     useDownloadCache: false

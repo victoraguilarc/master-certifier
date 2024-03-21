@@ -3,7 +3,8 @@
     package:
       patterns:
         - "src/**"
-    handler: src.handler.handler
+    handler: src.handler.wrapped_handler
+
     environment:
       CLOUDFRONT_BASE_URL: ${ssm:/${self:service}/cloudfront-base-url}
       CERTIFICATE_TABLE: ${self:custom.CertificateTableName}
@@ -15,6 +16,10 @@
           method: any
           path: /{proxy+}
           cors: true
+
+    warmup:
+      default:
+        enabled: prod
 
 dev:
   functions: *default_functions
