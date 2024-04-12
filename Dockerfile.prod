@@ -1,0 +1,49 @@
+FROM python:3.10-slim-buster as image_base
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV POETRY_VERSION=1.8.2 \
+    POETRY_VIRTUALENVS_CREATE=false
+
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential libssl-dev libffi-dev \
+  # psycopg2 dependencies
+  && apt-get install -y libpq-dev \
+  # Translations dependencies
+  && apt-get install -y gettext bash curl jq wget \
+  # Timezone
+  && apt-get install -y tzdata \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV TZ UTC
+
+RUN pip install --upgrade pip
+RUN pip install setuptools
+RUN pip install "poetry==$POETRY_VERSION"
+
+WORKDIR /app
+
+COPY pyproject.toml /app/
+
+RUN poetry config --local installer.no-binary psycopg2
+RUN poetry install --no-interaction --no-ansi --without dev
+
+
+EXPOSE 8000
+
+
+#
+#  P R O D U C T I O N
+#
+FROM image_base as production
+
+COPY compose/start-prod.sh /start
+RUN sed -i 's/\r//' /start
+RUN chmod +x /start
+
+COPY . /app
+
+CMD ["/start"]
