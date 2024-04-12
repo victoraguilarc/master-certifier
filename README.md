@@ -1,8 +1,10 @@
-Certifier
-==================
+Skills Certifite Generator
+==========================
 
-This starter kit shows how to deploy a serverless REST API on AWS using:
+REST API to generate a skills certificate in PDF format.
+
 * Python
 * Poetry
 * FastAPI
-* Serverless framework
+* Docker Compose
+
