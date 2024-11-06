@@ -6,8 +6,17 @@ services:
       context: .
       dockerfile: ./Dockerfile.prod
       target: production
-    env_file:
-      - .env
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_REGION=${AWS_REGION}
+      - CERTIFICATE_TABLE=${CERTIFICATE_TABLE}
+      - REPLACEMENT_TABLE=${REPLACEMENT_TABLE}
+      - TEMPLATE_TABLE=${TEMPLATE_TABLE}
+      - CERTIFICATE_BUCKET=${CERTIFICATE_BUCKET}
+      - CLOUDFRONT_BASE_URL=${CLOUDFRONT_BASE_URL}
+      - FONTCONFIG_PATH=${FONTCONFIG_PATH}
     ports:
       - "8000:8000"
     command: /start

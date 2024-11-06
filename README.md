@@ -1,5 +1,5 @@
-Skills Certifite Generator
-==========================
+Master Certifier
+================
 
 REST API to generate a skills certificate in PDF format.
 
