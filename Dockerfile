@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster as image_base
+FROM python:3.10-slim-buster AS image_base
 
 ENV NODE_VERSION 18.17.0
 ENV POETRY_VERSION=1.8.2 \
